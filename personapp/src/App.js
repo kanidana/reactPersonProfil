@@ -1,44 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import './App.css'
 
-const MyPersonnComponent = () => {
-  const [person, setPerson] = useState({
-    name: "John Doe",
-    profession: "Software Developer",
-    imageSrc: "https://cdn.pixabay.com/photo/2019/10/29/10/16/model-4586589_1280.jpg",
-    bio: "I'm a software developer since June 2024"
-  });
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      person: {
+        fullName: "John Doe",
+        bio: "I'm a software developer since June 2024",
+        imgSrc: "https://cdn.pixabay.com/photo/2019/10/29/10/16/model-4586589_1280.jpg",
+        profession: "Software Developer"
+      },
+      show: false,
+      mountedTime: 0
+    };
+    this.toggleShow = this.toggleShow.bind(this);
+  }
 
-  const [show, setShow] = useState(false);
-  const [time, setTime] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(tmp => tmp + 1);
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.setState({ mountedTime: this.state.mountedTime + 1 });
     }, 1000);
+  }
 
-    return () => clearInterval(interval);
-  }, []);
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
-  return (
-    <div style={{display: "flex", alignItems: "center", justifyContent:"center", marginTop:"50px", backgroundColor:"#CFE7EC"}}>
-      <div>
-      {show && (
-        <div>
-          <h1>{person.name}</h1>
-          <p>{person.profession}</p>
-          <img style={{width:"10rem"}} src={person.imageSrc} alt='my profile' />
-          <p style={{fontStyle:"italic"}}>{person.bio}</p>
-        </div>
-      )}
+  toggleShow() {
+    this.setState({ show: !this.state.show });
+  }
 
-      <button style={{border:"none", backgroundColor:"#91BBC5", borderRadius:"30px", fontWeight:"bold"}} onClick={() => setShow(!show)}>
-        {show ? 'Hide' : 'Show'} Person
-      </button>
-      <p>Le temps écoulé est : {time} secondes</p>
+  render() {
+    const { person, show, mountedTime } = this.state;
+    return (
+      <div className='App'>
+        <button onClick={this.toggleShow}>
+          {show ? "Hide Profile" : "Show Profile"}
+        </button>
+        {show && (
+          <div>
+            <h1>{person.fullName}</h1>
+            <p>{person.profession}</p>
+            <img style={{ width: "10rem" }} src={person.imgSrc} alt='my profile' />
+            <p style={{ fontStyle: "italic" }}>{person.bio}</p>
+          </div>
+        )}
+        <p>Time since last component mount: {mountedTime} seconds</p>
       </div>
-      
-    </div>
-  );
-};
+    );
+  }
+}
 
-export default MyPersonnComponent;
+export default App;
